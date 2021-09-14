@@ -214,6 +214,9 @@ export default function Home(): JSX.Element {
                               ) : (
                                 ""
                               )}
+                              <p className="d-none d-xl-block">
+                                {date ? showMemo(date) : ""}
+                              </p>
                             </td>
                           );
                         }
