@@ -13,11 +13,17 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
 const db = firebase.firestore();
+const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
+
+auth.signOut();
 
 export default function Home(): JSX.Element {
   const mydata: any[] | (() => any[]) = [];
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
+
+  const [message, setMessage] = useState("wait...");
 
   const [data, setData] = useState(mydata);
   const [year, setYear] = useState(currentYear);
@@ -28,16 +34,31 @@ export default function Home(): JSX.Element {
   const [show, setShow] = useState(false);
 
   useEffect((): void => {
-    db.collection("mydata")
-      .get()
-      .then((snapshot): void => {
-        snapshot.forEach((document): void => {
-          const doc = document.data();
-          mydata.push(doc);
-        });
-        setData(mydata);
+    auth
+      .signInWithPopup(provider)
+      .then((result): void => {
+        if (result.user !== null) {
+          setMessage(`logined: ${result.user.displayName}`);
+        }
+      })
+      .catch((_error): void => {
+        setMessage("not logined.");
       });
-  }, [show]);
+  }, []);
+
+  useEffect((): void => {
+    if (auth.currentUser != null) {
+      db.collection("mydata")
+        .get()
+        .then((snapshot): void => {
+          snapshot.forEach((document): void => {
+            const doc = document.data();
+            mydata.push(doc);
+          });
+          setData(mydata);
+        });
+    }
+  }, [message, show]);
 
   const currentYMD = (e: number): string => {
     const yyyy = String(year);
@@ -160,6 +181,9 @@ export default function Home(): JSX.Element {
 
       <Navbar bg="primary" variant="dark">
         <Navbar.Brand>️📅 メモのできるカレンダー</Navbar.Brand>
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>{message}</Navbar.Text>
+        </Navbar.Collapse>
       </Navbar>
 
       <h4 className="my-3">{`${year}/${month + 1}`}</h4>
