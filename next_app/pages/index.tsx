@@ -16,14 +16,13 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-auth.signOut();
-
 export default function Home(): JSX.Element {
   const mydata: any[] | (() => any[]) = [];
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 
-  const [message, setMessage] = useState("wait...");
+  const [loginState, setLoginState] = useState("Login");
+  const [user, setUser] = useState("");
 
   const [data, setData] = useState(mydata);
   const [year, setYear] = useState(currentYear);
@@ -33,22 +32,41 @@ export default function Home(): JSX.Element {
   const [memoExist, setMemoExist] = useState(false);
   const [show, setShow] = useState(false);
 
-  useEffect((): void => {
+  const login = (): void => {
     auth
       .signInWithPopup(provider)
       .then((result): void => {
         if (result.user !== null) {
-          setMessage(`logined: ${result.user.displayName}`);
+          setLoginState("Logout");
+          setUser(`logined: ${result.user.displayName}`);
         }
       })
       .catch((_error): void => {
-        setMessage("not logined.");
+        setUser("not logined.");
       });
-  }, []);
+  };
+
+  const logout = (): void => {
+    auth.signOut();
+    setLoginState("Login");
+    setUser("");
+  };
+
+  const doLogin = (): void => {
+    if (auth.currentUser == null) {
+      login();
+    } else {
+      logout();
+    }
+  };
 
   useEffect((): void => {
     if (auth.currentUser != null) {
+      setLoginState("Logout");
+      setUser(auth.currentUser.displayName);
       db.collection("mydata")
+        .doc(auth.currentUser.email)
+        .collection("memo")
         .get()
         .then((snapshot): void => {
           snapshot.forEach((document): void => {
@@ -58,7 +76,7 @@ export default function Home(): JSX.Element {
           setData(mydata);
         });
     }
-  }, [message, show]);
+  }, [user, show]);
 
   const currentYMD = (e: number): string => {
     const yyyy = String(year);
@@ -115,12 +133,16 @@ export default function Home(): JSX.Element {
   const doAdd = (): void => {
     const ob = { memo: memo, date: currentYMD(currentDate) };
     db.collection("mydata")
+      .doc(auth.currentUser.email)
+      .collection("memo")
       .add(ob)
       .then((): void => handleClose());
   };
 
   const doDelete = (): void => {
     db.collection("mydata")
+      .doc(auth.currentUser.email)
+      .collection("memo")
       .where("date", "==", currentYMD(currentDate))
       .get()
       .then((snapshot): void => {
@@ -182,7 +204,10 @@ export default function Home(): JSX.Element {
       <Navbar bg="primary" variant="dark">
         <Navbar.Brand>️📅 メモのできるカレンダー</Navbar.Brand>
         <Navbar.Collapse className="justify-content-end">
-          <Navbar.Text>{message}</Navbar.Text>
+          <Navbar.Text>{user}</Navbar.Text>
+          <Button variant="outline-light" onClick={doLogin}>
+            {loginState}
+          </Button>
         </Navbar.Collapse>
       </Navbar>
 
