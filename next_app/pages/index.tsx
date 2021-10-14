@@ -63,9 +63,9 @@ export default function Home(): JSX.Element {
   useEffect((): void => {
     if (auth.currentUser != null) {
       setLoginState("Logout");
-      setUser(auth.currentUser.displayName);
+      setUser(auth.currentUser.displayName!);
       db.collection("mydata")
-        .doc(auth.currentUser.email)
+        .doc(auth.currentUser.email!)
         .collection("memo")
         .get()
         .then((snapshot): void => {
@@ -132,24 +132,28 @@ export default function Home(): JSX.Element {
 
   const doAdd = (): void => {
     const ob = { memo: memo, date: currentYMD(currentDate) };
-    db.collection("mydata")
-      .doc(auth.currentUser.email)
-      .collection("memo")
-      .add(ob)
-      .then((): void => handleClose());
+    if (auth.currentUser != null) {
+      db.collection("mydata")
+        .doc(auth.currentUser.email!)
+        .collection("memo")
+        .add(ob)
+        .then((): void => handleClose());
+    }
   };
 
   const doDelete = (): void => {
-    db.collection("mydata")
-      .doc(auth.currentUser.email)
-      .collection("memo")
-      .where("date", "==", currentYMD(currentDate))
-      .get()
-      .then((snapshot): void => {
-        snapshot.forEach((document): void => {
-          document.ref.delete().then((): void => handleClose());
+    if (auth.currentUser != null) {
+      db.collection("mydata")
+        .doc(auth.currentUser.email!)
+        .collection("memo")
+        .where("date", "==", currentYMD(currentDate))
+        .get()
+        .then((snapshot): void => {
+          snapshot.forEach((document): void => {
+            document.ref.delete().then((): void => handleClose());
+          });
         });
-      });
+    }
   };
 
   const handleOpen = (date: number): void => {
