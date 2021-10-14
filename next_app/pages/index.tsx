@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
 import "../components/fire";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "react-bootstrap/Navbar";
