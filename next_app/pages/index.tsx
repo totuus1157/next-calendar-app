@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import firebase from "firebase/app";
@@ -78,7 +79,7 @@ export default function Home(): JSX.Element {
           setData(mydata);
         });
     }
-  }, [user, show]);
+  }, [user, show, mydata]);
 
   const currentYMD = (e: number): string => {
     const yyyy = String(year);
