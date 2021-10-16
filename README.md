@@ -9,3 +9,8 @@ Next.js 製カレンダーアプリ
 - Firebase
 - Docker Compose
 - TypeScript
+
+## TODO
+- コンポーネント分割
+- モバイル環境でカレンダー本体が画面幅に収まる様に修正
+- バリデーション実装
