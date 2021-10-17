@@ -198,12 +198,6 @@ export default function Home(): JSX.Element {
     <div>
       <Header />
 
-      <style jsx>{`
-        h4 {
-          text-align: center;
-        }
-      `}</style>
-
       <Navbar bg="primary" variant="dark">
         <Navbar.Brand>️📅 メモのできるカレンダー</Navbar.Brand>
         <Navbar.Collapse className="justify-content-end">
@@ -214,7 +208,9 @@ export default function Home(): JSX.Element {
         </Navbar.Collapse>
       </Navbar>
 
-      <h4 className="my-3">{`${year}/${month + 1}`}</h4>
+      <h4 className="my-3" style={{ textAlign: "center" }}>{`${year}年${
+        month + 1
+      }月`}</h4>
 
       <ButtonGroup>
         <Button variant="secondary" onClick={sendOneMonth(-1)}>
