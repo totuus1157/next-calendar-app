@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
+import Header from "../components/header";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
@@ -35,6 +35,24 @@ export default function Home(): JSX.Element {
   const [memoExist, setMemoExist] = useState(false);
   const [show, setShow] = useState(false);
 
+  useEffect((): void => {
+    if (auth.currentUser != null) {
+      setLoginState("Logout");
+      setUser(auth.currentUser.displayName!);
+      db.collection("mydata")
+        .doc(auth.currentUser.email!)
+        .collection("memo")
+        .get()
+        .then((snapshot): void => {
+          snapshot.forEach((document): void => {
+            const doc = document.data();
+            mydata.push(doc);
+          });
+          setData(mydata);
+        });
+    }
+  }, [user, show, mydata]);
+
   const login = (): void => {
     auth
       .signInWithPopup(provider)
@@ -62,24 +80,6 @@ export default function Home(): JSX.Element {
       logout();
     }
   };
-
-  useEffect((): void => {
-    if (auth.currentUser != null) {
-      setLoginState("Logout");
-      setUser(auth.currentUser.displayName!);
-      db.collection("mydata")
-        .doc(auth.currentUser.email!)
-        .collection("memo")
-        .get()
-        .then((snapshot): void => {
-          snapshot.forEach((document): void => {
-            const doc = document.data();
-            mydata.push(doc);
-          });
-          setData(mydata);
-        });
-    }
-  }, [user, show, mydata]);
 
   const currentYMD = (e: number): string => {
     const yyyy = String(year);
