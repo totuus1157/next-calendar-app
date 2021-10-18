@@ -279,7 +279,7 @@ export default function Home(): JSX.Element {
       </Container>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>{`${year}/${
             month + 1
           }/${currentDate}のメモ`}</Modal.Title>
@@ -291,7 +291,7 @@ export default function Home(): JSX.Element {
             <Form>
               <Form.Group>
                 <Form.Label>新規登録</Form.Label>
-                <Form.Control type="text" onChange={doChange} />
+                <Form.Control type="text" onChange={doChange} autoFocus />
               </Form.Group>
             </Form>
           )}
