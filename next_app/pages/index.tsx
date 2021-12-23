@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-import Header from "../components/header";
+import Header from "../components/Header";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
@@ -51,7 +51,7 @@ export default function Home(): JSX.Element {
           setData(mydata);
         });
     }
-  }, [user, show, mydata]);
+  }, [user, show]);
 
   const login = (): void => {
     auth
@@ -239,40 +239,36 @@ export default function Home(): JSX.Element {
               </tr>
             </thead>
             <tbody>
-              {calendarBody.map(
-                (week, i): JSX.Element => {
-                  return (
-                    <tr key={week.join("")}>
-                      {week.map(
-                        (date, j): JSX.Element => {
-                          return (
-                            <td key={`${i}${j}`}>
-                              {date ? (
-                                <Button
-                                  variant={findMemo(date) ? "info" : "light"}
-                                  onClick={
-                                    (): void =>
-                                      handleOpen(
-                                        date
-                                      ) /* この実行方法でないと無限ループが起きる */
-                                  }
-                                >
-                                  {date}
-                                </Button>
-                              ) : (
-                                ""
-                              )}
-                              <p className="d-none d-xl-block">
-                                {date ? showMemo(date) : ""}
-                              </p>
-                            </td>
-                          );
-                        }
-                      )}
-                    </tr>
-                  );
-                }
-              )}
+              {calendarBody.map((week, i): JSX.Element => {
+                return (
+                  <tr key={week.join("")}>
+                    {week.map((date, j): JSX.Element => {
+                      return (
+                        <td key={`${i}${j}`}>
+                          {date ? (
+                            <Button
+                              variant={findMemo(date) ? "info" : "light"}
+                              onClick={
+                                (): void =>
+                                  handleOpen(
+                                    date
+                                  ) /* この実行方法でないと無限ループが起きる */
+                              }
+                            >
+                              {date}
+                            </Button>
+                          ) : (
+                            ""
+                          )}
+                          <p className="d-none d-xl-block">
+                            {date ? showMemo(date) : ""}
+                          </p>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </Row>
@@ -291,7 +287,7 @@ export default function Home(): JSX.Element {
             <Form>
               <Form.Group>
                 <Form.Label>新規登録</Form.Label>
-                <Form.Control type="text" onChange={doChange} autoFocus />
+                <Form.Control type="text" onChange={doChange} />
               </Form.Group>
             </Form>
           )}
